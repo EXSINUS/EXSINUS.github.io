@@ -1,0 +1,785 @@
+Вот полный код `index.html`:
+
+```html
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Мұғалімнің Эмоционалдық Шаршауын Болжау</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;600;800&family=Mulish:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #060b14;
+  --surface: #0d1422;
+  --surface2: #131d2e;
+  --border: #1a2840;
+  --accent: #4f8ef7;
+  --accent2: #00d4c8;
+  --green: #0fd47a;
+  --orange: #ffb140;
+  --red: #ff4f6d;
+  --text: #dde8f5;
+  --muted: #4d6a8a;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Mulish', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background-image:
+    linear-gradient(rgba(79,142,247,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(79,142,247,0.035) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events:none; z-index:0;
+}
+
+body::after {
+  content:'';
+  position:fixed;
+  top:-200px; left:50%;
+  transform: translateX(-50%);
+  width:700px; height:400px;
+  background: radial-gradient(ellipse, rgba(79,142,247,0.08) 0%, transparent 70%);
+  pointer-events:none; z-index:0;
+}
+
+.container {
+  max-width:940px;
+  margin:0 auto;
+  padding:48px 20px 60px;
+  position:relative; z-index:1;
+}
+
+.header {
+  text-align:center;
+  margin-bottom:52px;
+  animation: fadeDown 0.9s ease;
+}
+
+.badge {
+  display:inline-flex; align-items:center; gap:8px;
+  background: rgba(79,142,247,0.1);
+  border: 1px solid rgba(79,142,247,0.25);
+  color: var(--accent2);
+  font-family:'Unbounded',sans-serif;
+  font-size:9px; letter-spacing:3px;
+  padding:7px 18px; border-radius:30px;
+  margin-bottom:22px; text-transform:uppercase;
+}
+
+.badge-dot {
+  width:6px; height:6px;
+  background:var(--accent2);
+  border-radius:50%;
+  animation: pulse 2s infinite;
+}
+
+h1 {
+  font-family:'Unbounded',sans-serif;
+  font-size: clamp(20px,4vw,40px);
+  font-weight:800; line-height:1.2;
+  background: linear-gradient(135deg,#dde8f5 0%,#4f8ef7 45%,#00d4c8 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  margin-bottom:14px;
+}
+
+.subtitle {
+  color:var(--muted);
+  font-size:13px; font-weight:300;
+  letter-spacing:1px; line-height:1.6;
+}
+
+.stats-row {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  gap:14px; margin-bottom:32px;
+  animation: fadeUp 0.8s ease 0.15s both;
+}
+
+.stat-card {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px; padding:20px 16px;
+  text-align:center; position:relative; overflow:hidden;
+}
+
+.stat-card::before {
+  content:''; position:absolute;
+  top:0; left:0; right:0; height:2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+}
+
+.stat-num {
+  font-family:'Unbounded',sans-serif;
+  font-size:28px; font-weight:800;
+  color:var(--accent);
+}
+
+.stat-label {
+  font-size:10px; color:var(--muted);
+  margin-top:5px; letter-spacing:0.5px;
+  line-height:1.4;
+}
+
+.main-card {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:22px; padding:40px;
+  animation: fadeUp 0.8s ease 0.25s both;
+  position:relative; overflow:hidden;
+}
+
+.main-card::before {
+  content:''; position:absolute;
+  top:0; left:0; right:0; height:1px;
+  background: linear-gradient(90deg, transparent, rgba(79,142,247,0.27), transparent);
+}
+
+.section-title {
+  font-family:'Unbounded',sans-serif;
+  font-size:11px; font-weight:600;
+  color:var(--accent2); letter-spacing:2.5px;
+  text-transform:uppercase;
+  margin-bottom:28px;
+  display:flex; align-items:center; gap:12px;
+}
+
+.section-title::before {
+  content:''; width:4px; height:22px; flex-shrink:0;
+  background: linear-gradient(var(--accent),var(--accent2));
+  border-radius:2px;
+}
+
+.inputs-grid {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:26px; margin-bottom:30px;
+}
+
+.field { display:flex; flex-direction:column; gap:11px; }
+
+.field-header {
+  display:flex; justify-content:space-between; align-items:center;
+}
+
+.field-name {
+  font-size:11px; font-weight:700;
+  color:var(--muted); letter-spacing:1px;
+  text-transform:uppercase;
+}
+
+.field-val {
+  font-family:'Unbounded',sans-serif;
+  font-size:20px; font-weight:700;
+  color:var(--accent);
+}
+
+input[type="range"] {
+  -webkit-appearance:none;
+  width:100%; height:3px;
+  background:var(--border);
+  border-radius:2px; outline:none; cursor:pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance:none;
+  width:20px; height:20px;
+  background: var(--accent);
+  border-radius:50%; cursor:pointer;
+  box-shadow:0 0 12px rgba(79,142,247,0.6);
+  transition:transform 0.2s, box-shadow 0.2s;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform:scale(1.35);
+  box-shadow:0 0 20px rgba(79,142,247,0.8);
+}
+
+.field-hint { font-size:11px; color:var(--muted); opacity:0.65; }
+
+.family-row { margin-bottom:30px; }
+
+.family-options {
+  display:grid; grid-template-columns:repeat(5,1fr);
+  gap:10px; margin-top:8px;
+}
+
+.fam-btn {
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:10px; padding:12px 8px;
+  text-align:center; cursor:pointer;
+  transition:all 0.2s; user-select:none;
+}
+
+.fam-btn:hover {
+  border-color:var(--accent);
+  background:rgba(79,142,247,0.08);
+}
+
+.fam-btn.active {
+  border-color:var(--accent);
+  background:rgba(79,142,247,0.15);
+  box-shadow:0 0 14px rgba(79,142,247,0.25);
+}
+
+.fam-btn .fam-icon { font-size:22px; display:block; margin-bottom:5px; }
+.fam-btn .fam-label { font-size:10px; color:var(--muted); letter-spacing:0.3px; line-height:1.3; }
+.fam-btn.active .fam-label { color:var(--accent); }
+
+.btn-predict {
+  width:100%; padding:20px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border:none; border-radius:14px;
+  font-family:'Unbounded',sans-serif;
+  font-size:12px; font-weight:700;
+  color:white; letter-spacing:2.5px;
+  text-transform:uppercase; cursor:pointer;
+  transition:all 0.3s; position:relative; overflow:hidden;
+}
+
+.btn-predict::after {
+  content:'';
+  position:absolute; inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.12),transparent);
+  opacity:0; transition:opacity 0.3s;
+}
+
+.btn-predict:hover::after { opacity:1; }
+.btn-predict:hover { transform:translateY(-3px); box-shadow:0 10px 35px rgba(79,142,247,0.45); }
+.btn-predict:active { transform:translateY(-1px); }
+
+.result-section { margin-top:36px; display:none; }
+.result-section.visible { display:block; animation:fadeUp 0.5s ease; }
+
+.divider {
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--border),transparent);
+  margin-bottom:30px;
+}
+
+.result-grid {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:16px; margin-bottom:18px;
+}
+
+.result-prob-card {
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:16px; padding:30px;
+  text-align:center;
+}
+
+.prob-big {
+  font-family:'Unbounded',sans-serif;
+  font-size:60px; font-weight:800;
+  line-height:1; margin-bottom:10px;
+  transition:color 0.5s;
+}
+
+.prob-desc {
+  font-size:11px; color:var(--muted);
+  letter-spacing:1px; text-transform:uppercase;
+  line-height:1.6;
+}
+
+.result-risk-card {
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:16px; padding:30px;
+  display:flex; flex-direction:column;
+  justify-content:center; align-items:center;
+  gap:14px; text-align:center;
+}
+
+.risk-emoji { font-size:48px; }
+
+.risk-label {
+  font-family:'Unbounded',sans-serif;
+  font-size:14px; font-weight:700;
+  letter-spacing:1px; line-height:1.4;
+}
+
+.progress-card {
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:16px; padding:22px 24px;
+  margin-bottom:18px;
+}
+
+.progress-header {
+  display:flex; justify-content:space-between;
+  font-size:11px; color:var(--muted);
+  letter-spacing:1px; text-transform:uppercase;
+  margin-bottom:12px;
+}
+
+.prog-bg {
+  height:10px; background:var(--border);
+  border-radius:5px; overflow:hidden;
+}
+
+.prog-fill {
+  height:100%; border-radius:5px;
+  width:0%; transition:width 1.2s cubic-bezier(0.4,0,0.2,1), background 0.5s;
+}
+
+.factors-grid {
+  display:grid; grid-template-columns:repeat(5,1fr);
+  gap:12px; margin-bottom:18px;
+}
+
+.fc {
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:12px; padding:16px 10px;
+  text-align:center;
+}
+
+.fc-icon { font-size:20px; margin-bottom:7px; }
+.fc-name { font-size:10px; color:var(--muted); letter-spacing:0.5px; margin-bottom:5px; text-transform:uppercase; }
+.fc-val { font-family:'Unbounded',sans-serif; font-size:13px; font-weight:700; }
+.fc-imp { font-size:10px; color:var(--muted); margin-top:3px; }
+
+.recs-card {
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:16px; padding:24px;
+}
+
+.recs-header {
+  font-size:11px; font-weight:700;
+  color:var(--accent2); letter-spacing:2px;
+  text-transform:uppercase; margin-bottom:16px;
+}
+
+.rec { display:flex; gap:12px; align-items:flex-start; margin-bottom:12px; font-size:13px; line-height:1.6; }
+.rec:last-child { margin-bottom:0; }
+.rec-dot { width:6px; height:6px; border-radius:50%; margin-top:7px; flex-shrink:0; }
+
+.algo-section {
+  margin-top:28px;
+  animation:fadeUp 0.8s ease 0.35s both;
+}
+
+.algo-card {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:22px; padding:36px;
+  position:relative; overflow:hidden;
+}
+
+.algo-card::before {
+  content:''; position:absolute;
+  top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,212,200,0.27),transparent);
+}
+
+.algo-grid {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:18px; margin-top:22px;
+}
+
+.algo-item {
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:12px; padding:20px;
+}
+
+.algo-item-title {
+  font-family:'Unbounded',sans-serif;
+  font-size:10px; color:var(--accent2);
+  letter-spacing:2px; text-transform:uppercase;
+  margin-bottom:12px;
+}
+
+.algo-item-text { font-size:13px; color:var(--muted); line-height:1.75; }
+.algo-item-text strong { color:var(--text); }
+
+.formula-box {
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:10px; padding:16px 20px;
+  margin-top:14px; font-family:monospace;
+  font-size:12px; color:var(--accent2);
+  text-align:center; letter-spacing:1px;
+}
+
+@keyframes fadeDown {
+  from { opacity:0; transform:translateY(-24px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(24px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+@keyframes pulse {
+  0%,100% { opacity:1; transform:scale(1); }
+  50% { opacity:0.5; transform:scale(0.7); }
+}
+
+@media (max-width:640px) {
+  .inputs-grid, .result-grid, .algo-grid { grid-template-columns:1fr; }
+  .factors-grid { grid-template-columns:repeat(3,1fr); }
+  .family-options { grid-template-columns:repeat(3,1fr); }
+  .stats-row { grid-template-columns:repeat(2,1fr); }
+  .main-card { padding:24px; }
+  .prob-big { font-size:46px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="badge">
+      <span class="badge-dot"></span>
+      Logistic Regression · ML Жүйесі
+    </div>
+    <h1>Мұғалімнің Эмоционалдық<br>Шаршауын Болжау</h1>
+    <p class="subtitle">Кәсіби күйзеліс қаупін бағалайтын машиналық оқыту жүйесі<br>5 белгі негізінде Logistic Regression алгоритмімен жұмыс істейді</p>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-num">94%</div>
+      <div class="stat-label">Модель дәлдігі</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">500</div>
+      <div class="stat-label">Оқу үлгілері</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">5</div>
+      <div class="stat-label">Белгі саны</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">3</div>
+      <div class="stat-label">Қауіп деңгейі</div>
+    </div>
+  </div>
+
+  <div class="main-card">
+    <div class="section-title">Деректерді енгізу</div>
+
+    <div class="inputs-grid">
+      <div class="field">
+        <div class="field-header">
+          <span class="field-name">📚 Апталық сабақ саны</span>
+          <span class="field-val" id="val-lessons">28</span>
+        </div>
+        <input type="range" id="lessons" min="10" max="45" value="28"
+          oninput="document.getElementById('val-lessons').textContent=this.value">
+        <div class="field-hint">Аптасына өтілетін сабақ саны (10–45)</div>
+      </div>
+
+      <div class="field">
+        <div class="field-header">
+          <span class="field-name">📄 Құжат жүктемесі (сағ/апта)</span>
+          <span class="field-val" id="val-docs">8</span>
+        </div>
+        <input type="range" id="docs" min="1" max="20" value="8"
+          oninput="document.getElementById('val-docs').textContent=this.value">
+        <div class="field-hint">Аптасына құжат толтыруға жұмсалған уақыт (1–20)</div>
+      </div>
+
+      <div class="field">
+        <div class="field-header">
+          <span class="field-name">😴 Ұйқы ұзақтығы (сағ/тәулік)</span>
+          <span class="field-val" id="val-sleep">7.0</span>
+        </div>
+        <input type="range" id="sleep" min="4" max="9" step="0.5" value="7"
+          oninput="document.getElementById('val-sleep').textContent=parseFloat(this.value).toFixed(1)">
+        <div class="field-hint">Тәулігіне ұйқы уақыты (4–9 сағат)</div>
+      </div>
+
+      <div class="field">
+        <div class="field-header">
+          <span class="field-name">🏫 Жұмыс өтілі (жыл)</span>
+          <span class="field-val" id="val-exp">10</span>
+        </div>
+        <input type="range" id="exp" min="1" max="35" value="10"
+          oninput="document.getElementById('val-exp').textContent=this.value">
+        <div class="field-hint">Педагогикалық жұмыс өтілі (1–35 жыл)</div>
+      </div>
+    </div>
+
+    <div class="family-row">
+      <div class="field-header" style="margin-bottom:14px;">
+        <span class="field-name">🏠 Отбасылық жағдайы</span>
+        <span class="field-val" id="val-family-label" style="font-size:13px;">Орташа</span>
+      </div>
+      <div class="family-options" id="family-options">
+        <div class="fam-btn" data-val="1" onclick="selectFamily(1)">
+          <span class="fam-icon">😊</span>
+          <span class="fam-label">Өте<br>жақсы</span>
+        </div>
+        <div class="fam-btn" data-val="3" onclick="selectFamily(3)">
+          <span class="fam-icon">🙂</span>
+          <span class="fam-label">Жақсы</span>
+        </div>
+        <div class="fam-btn active" data-val="5" onclick="selectFamily(5)">
+          <span class="fam-icon">😐</span>
+          <span class="fam-label">Орташа</span>
+        </div>
+        <div class="fam-btn" data-val="7" onclick="selectFamily(7)">
+          <span class="fam-icon">😟</span>
+          <span class="fam-label">Қиын</span>
+        </div>
+        <div class="fam-btn" data-val="9" onclick="selectFamily(9)">
+          <span class="fam-icon">😰</span>
+          <span class="fam-label">Өте<br>қиын</span>
+        </div>
+      </div>
+      <div class="field-hint" style="margin-top:10px;">Отбасылық жағдайдың стресс деңгейі (0 – жоқ, 9 – өте жоғары)</div>
+    </div>
+
+    <button class="btn-predict" onclick="predict()">
+      ⚡ БОЛЖАУДЫ ІСКЕ ҚОСУ
+    </button>
+
+    <div class="result-section" id="result-section">
+      <div class="divider"></div>
+      <div class="section-title">Болжау нәтижесі</div>
+
+      <div class="result-grid">
+        <div class="result-prob-card">
+          <div class="prob-big" id="prob-number">—</div>
+          <div class="prob-desc">Эмоционалдық шаршау<br>ықтималдығы</div>
+        </div>
+        <div class="result-risk-card">
+          <div class="risk-emoji" id="risk-icon">⏳</div>
+          <div class="risk-label" id="risk-text">—</div>
+        </div>
+      </div>
+
+      <div class="progress-card">
+        <div class="progress-header">
+          <span>Қауіп деңгейі</span>
+          <span id="prog-pct">0%</span>
+        </div>
+        <div class="prog-bg">
+          <div class="prog-fill" id="prog-fill"></div>
+        </div>
+      </div>
+
+      <div class="factors-grid">
+        <div class="fc">
+          <div class="fc-icon">📚</div>
+          <div class="fc-name">Сабақ</div>
+          <div class="fc-val" id="fc-lessons">—</div>
+          <div class="fc-imp" id="fc-lessons-imp">—</div>
+        </div>
+        <div class="fc">
+          <div class="fc-icon">📄</div>
+          <div class="fc-name">Құжат</div>
+          <div class="fc-val" id="fc-docs">—</div>
+          <div class="fc-imp" id="fc-docs-imp">—</div>
+        </div>
+        <div class="fc">
+          <div class="fc-icon">😴</div>
+          <div class="fc-name">Ұйқы</div>
+          <div class="fc-val" id="fc-sleep">—</div>
+          <div class="fc-imp" id="fc-sleep-imp">—</div>
+        </div>
+        <div class="fc">
+          <div class="fc-icon">🏫</div>
+          <div class="fc-name">Өтіл</div>
+          <div class="fc-val" id="fc-exp">—</div>
+          <div class="fc-imp" id="fc-exp-imp">—</div>
+        </div>
+        <div class="fc">
+          <div class="fc-icon">🏠</div>
+          <div class="fc-name">Отбасы</div>
+          <div class="fc-val" id="fc-fam">—</div>
+          <div class="fc-imp" id="fc-fam-imp">—</div>
+        </div>
+      </div>
+
+      <div class="recs-card">
+        <div class="recs-header">💡 Ұсыныстар</div>
+        <div id="recs-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="algo-section">
+    <div class="algo-card">
+      <div class="section-title">Алгоритм туралы</div>
+      <div class="algo-grid">
+        <div class="algo-item">
+          <div class="algo-item-title">Logistic Regression дегеніміз не?</div>
+          <div class="algo-item-text">
+            Логистикалық регрессия — <strong>екілік классификация</strong> үшін қолданылатын машиналық оқыту алгоритмі. Sigmoid функциясы арқылы енгізілген деректерді 0-ден 1-ге дейінгі ықтималдыққа айналдырады.
+            <div class="formula-box">P(y=1) = 1 / (1 + e^(-z))</div>
+          </div>
+        </div>
+        <div class="algo-item">
+          <div class="algo-item-title">Модель сипаттамасы</div>
+          <div class="algo-item-text">
+            • <strong>Оқу үлгілері:</strong> 500 мұғалім<br>
+            • <strong>Тест жиыны:</strong> 100 үлгі (20%)<br>
+            • <strong>Дәлдік:</strong> 94.0%<br>
+            • <strong>Кітапхана:</strong> sklearn<br>
+            • <strong>Нормализация:</strong> StandardScaler
+          </div>
+        </div>
+        <div class="algo-item">
+          <div class="algo-item-title">Енгізу белгілері (5 дана)</div>
+          <div class="algo-item-text">
+            1. 📚 Апталық сабақ саны<br>
+            2. 📄 Құжат жүктемесі (сағ/апта)<br>
+            3. 😴 Ұйқы ұзақтығы (сағ/тәулік)<br>
+            4. 🏫 Жұмыс өтілі (жыл)<br>
+            5. 🏠 Отбасылық жағдайы (стресс деңгейі)
+          </div>
+        </div>
+        <div class="algo-item">
+          <div class="algo-item-title">Нәтиже деңгейлері</div>
+          <div class="algo-item-text">
+            • <strong style="color:#0fd47a">Төмен қауіп:</strong> 0–30%<br>
+            — Жағдай қалыпты, профилактика жеткілікті<br><br>
+            • <strong style="color:#ffb140">Орташа қауіп:</strong> 30–60%<br>
+            — Жүктемені азайту керек<br><br>
+            • <strong style="color:#ff4f6d">Жоғары қауіп:</strong> 60–100%<br>
+            — Шұғыл көмек қажет
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const MODEL = {
+  coef:      [3.2976418877833904, 2.546359935670173, -2.5544070583625316, 0.6229929549345227, 1.0664597598661778],
+  intercept: 3.0689263444843573,
+  mean:      [29.485, 10.0375, 6.59425, 17.465, 4.5025],
+  scale:     [9.137000328335334, 5.663134622274135, 1.4569632588023624, 9.751603714261568, 2.791951602374225]
+};
+
+let familyVal = 5;
+const FAM_LABELS = { 1:'Өте жақсы', 3:'Жақсы', 5:'Орташа', 7:'Қиын', 9:'Өте қиын' };
+
+function selectFamily(val) {
+  familyVal = val;
+  document.querySelectorAll('.fam-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.val) === val);
+  });
+  document.getElementById('val-family-label').textContent = FAM_LABELS[val] || val;
+}
+
+function sigmoid(z) { return 1 / (1 + Math.exp(-z)); }
+
+function predictBurnout(lessons, docs, sleep, exp, fam) {
+  const f = [lessons, docs, sleep, exp, fam];
+  const scaled = f.map((v,i) => (v - MODEL.mean[i]) / MODEL.scale[i]);
+  const z = MODEL.intercept + scaled.reduce((s,v,i) => s + v * MODEL.coef[i], 0);
+  return sigmoid(z);
+}
+
+function predict() {
+  const lessons = parseInt(document.getElementById('lessons').value);
+  const docs    = parseInt(document.getElementById('docs').value);
+  const sleep   = parseFloat(document.getElementById('sleep').value);
+  const exp     = parseInt(document.getElementById('exp').value);
+  const fam     = familyVal;
+
+  const prob = predictBurnout(lessons, docs, sleep, exp, fam);
+  const pct  = Math.round(prob * 1000) / 10;
+
+  const section = document.getElementById('result-section');
+  section.classList.add('visible');
+
+  let color, riskIcon, riskText, recs;
+
+  if (prob < 0.3) {
+    color = '#0fd47a'; riskIcon = '✅'; riskText = 'ТӨМЕН ҚАУІП';
+    recs = [
+      'Ағымдағы жұмыс жүктемесі қалыпты деңгейде. Осы ырғақты сақтауды жалғастырыңыз.',
+      'Алдын алу мақсатында әр 6-8 аптада демалыс жоспарлаңыз.',
+      'Ұйқы режимін сақтаңыз — бұл сіздің ең маңызды ресурсыңыз.',
+      'Коллегалармен достық қарым-қатынас орнатыңыз, бұл психологиялық тұрақтылыққа оң әсер етеді.'
+    ];
+  } else if (prob < 0.6) {
+    color = '#ffb140'; riskIcon = '⚠️'; riskText = 'ОРТАША ҚАУІП';
+    recs = [
+      'Апталық сабақ санын 5-7-ге азайту мүмкіндігін қарастырыңыз — мектеп әкімшілігімен кеңесіңіз.',
+      'Ұйқы ұзақтығын 7-8 сағатқа дейін арттырыңыз, бұл жоғары басымдылық.',
+      'Құжат жұмысын автоматтандыру құралдарын (үлгілер, цифрлық жүйелер) пайдаланыңыз.',
+      'Отбасылық мәселелер болса — жақын адамдарыңызбен ашық сөйлесіңіз, бірге шешім іздеңіз.',
+      'Мектеп психологымен кеңесу мүмкіндігін пайдаланыңыз.'
+    ];
+  } else {
+    color = '#ff4f6d'; riskIcon = '🚨'; riskText = 'ЖОҒАРЫ ҚАУІП!';
+    recs = [
+      'ШҰҒЫЛ: Жұмыс жүктемесін дереу азайту үшін мектеп әкімшілігіне жүгіңіз.',
+      'Кәсіби психологтың немесе психотерапевтің көмегіне жүгіну қажет.',
+      'Ұйқы режимін қалпына келтіру — №1 басымдылық, бұл болмаса ешнәрсе жұмыс істемейді.',
+      'Отбасылық стресс жоғары болса — отбасылық кеңесші маманына барыңыз.',
+      'Демалыс (еңбек демалысы) алуды қарастырыңыз — денеңіз мен жаныңыз қалпына келуі керек.',
+      'Медитация, тыныс алу жаттығулары сияқты демалу техникаларын күнделікті қолданыңыз.'
+    ];
+  }
+
+  const probEl = document.getElementById('prob-number');
+  probEl.textContent = pct + '%';
+  probEl.style.color = color;
+
+  document.getElementById('risk-icon').textContent = riskIcon;
+  const rt = document.getElementById('risk-text');
+  rt.textContent = riskText;
+  rt.style.color = color;
+
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-fill').style.background = `linear-gradient(90deg,${color}66,${color})`;
+  document.getElementById('prog-pct').textContent = pct + '%';
+
+  const vals = [lessons, docs, sleep, exp, fam];
+  const valIds  = ['fc-lessons','fc-docs','fc-sleep','fc-exp','fc-fam'];
+  const impIds  = ['fc-lessons-imp','fc-docs-imp','fc-sleep-imp','fc-exp-imp','fc-fam-imp'];
+  const units   = [' сабақ',' сағ',' сағ',' жыл',''];
+  const norms   = [20, 8, 7.5, null, 4];
+  const higher  = [true, true, false, false, true];
+  const famLabels = {1:'Өте жақсы',3:'Жақсы',5:'Орташа',7:'Қиын',9:'Өте қиын'};
+
+  for (let i = 0; i < 5; i++) {
+    const displayVal = i === 4 ? (famLabels[vals[i]] || vals[i]) : vals[i] + units[i];
+    document.getElementById(valIds[i]).textContent = displayVal;
+    if (norms[i] !== null) {
+      const bad = higher[i] ? vals[i] > norms[i] : vals[i] < norms[i];
+      document.getElementById(valIds[i]).style.color = bad ? '#ff4f6d' : '#0fd47a';
+      document.getElementById(impIds[i]).textContent  = bad ? '▲ Жоғары' : '✓ Норма';
+      document.getElementById(impIds[i]).style.color  = bad ? '#ff4f6d' : '#0fd47a';
+    } else {
+      document.getElementById(valIds[i]).style.color = '#4d6a8a';
+      document.getElementById(impIds[i]).textContent = 'Нейтраль';
+    }
+  }
+
+  document.getElementById('recs-list').innerHTML = recs.map(r => `
+    <div class="rec">
+      <div class="rec-dot" style="background:${color}"></div>
+      <span>${r}</span>
+    </div>
+  `).join('');
+
+  section.scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+</script>
+</body>
+</html>
+```
